@@ -1,0 +1,18 @@
+﻿
+
+
+.profileimage {
+    border-radius: 250%;
+    border: 30px solid black;
+}
+
+
+.myform{
+    
+    background : white;
+    padding : 30px;
+
+    box-shadow:0 0 30px rgb(214 215 215 / 60%);
+
+
+}

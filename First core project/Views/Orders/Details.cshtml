@@ -1,0 +1,35 @@
+﻿@model Order
+@{
+    var items = ViewBag.Items as List<OrderItem>;
+}
+
+<h2>تفاصيل الطلب رقم @Model.Id</h2>
+
+<table class="table">
+    <tr>
+        <th>المنتج</th>
+        <th>السعر</th>
+        <th>الكمية</th>
+        <th>الإجمالي</th>
+    </tr>
+
+    @foreach (var item in items)
+    {
+        <tr>
+            <td>@item.ProductName</td>
+            <td>@item.Price</td>
+            <td>@item.Quantity</td>
+            <td>@item.Total</td>
+        </tr>
+    }
+</table>
+
+<h3>الإجمالي: @Model.TotalPrice</h3>
+
+@if (Model.Status == 0)
+{
+    <form asp-action="Cancel" method="post">
+        <input type="hidden" name="id" value="@Model.Id" />
+        <button class="btn btn-danger">إلغاء الطلب</button>
+    </form>
+}

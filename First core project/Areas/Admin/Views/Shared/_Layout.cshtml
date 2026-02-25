@@ -1,0 +1,198 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>إدارة النظام - @ViewData["Title"]</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --primary-color: #2c3e50;
+            --accent-color: #34495e;
+            --text-light: #ecf0f1;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            right: 0; /* التثبيت بجهة اليمين للغة العربية */
+            background: var(--primary-color);
+            color: var(--text-light);
+            z-index: 1000;
+            overflow-y: auto;
+            transition: all 0.3s;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #1a252f;
+            text-align: center;
+            border-bottom: 1px solid #34495e;
+        }
+
+        .sidebar .menu-label {
+            padding: 15px 20px 5px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #95a5a6;
+            letter-spacing: 1px;
+        }
+
+        .sidebar a {
+            padding: 12px 20px;
+            display: block;
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: 0.3s;
+            border-right: 4px solid transparent;
+        }
+
+            .sidebar a:hover {
+                background: var(--accent-color);
+                color: white;
+                border-right: 4px solid #3498db;
+                padding-right: 25px;
+            }
+
+        .sidebar i {
+            width: 25px;
+            margin-left: 10px; /* مسافة للأيقونة من جهة اليسار لأن النص يبدأ من اليمين */
+        }
+
+        .submenu a {
+            padding-right: 45px !important;
+            font-size: 14px;
+            background: rgba(0,0,0,0.1);
+        }
+
+        /* Main Content Wrapper */
+        .main-wrapper {
+            margin-right: var(--sidebar-width); /* الهامش من اليمين بسبب السايدبار */
+            padding: 25px;
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background: white;
+            padding: 15px 30px;
+            margin-bottom: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Content Card */
+        .card-custom {
+            background: white;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            padding: 30px;
+            min-height: 80vh;
+        }
+
+        /* Responsive */
+        @@media (max-width: 992px) {
+            .sidebar
+
+        {
+            right: -100%; /* إخفاء السايدبار في الشاشات الصغيرة */
+        }
+
+        .main-wrapper {
+            margin-right: 0;
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        }</style>
+</head>
+<body>
+
+    <div class="sidebar shadow">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-shield-halved"></i> لوحة الإدارة</h4>
+            <small class="text-muted">نظام السايبر سيكيورتي</small>
+        </div>
+
+        <div class="menu-label">إدارة المتجر</div>
+        <a asp-area="Admin" asp-controller="Home" asp-action="Index">
+            <i class="fas fa-chart-line"></i> الإحصائيات
+        </a>
+        <a asp-area="Admin" asp-controller="Products" asp-action="Index">
+            <i class="fas fa-box"></i> المنتجات
+        </a>
+        <a asp-area="Admin" asp-controller="Categories" asp-action="Index">
+            <i class="fas fa-tags"></i> الأقسام
+        </a>
+
+        <div class="menu-label">الطلبات والمبيعات</div>
+        <a asp-area="Admin" asp-controller="Orders" asp-action="Index">
+            <i class="fas fa-shopping-cart"></i> الطلبات
+        </a>
+        <a asp-area="Admin" asp-controller="Reviews" asp-action="Index">
+            <i class="fas fa-star"></i> آراء العملاء
+        </a>
+
+        <div class="menu-label">لوحة التحكم الرئيسية</div>
+        <a asp-area="Admin" asp-controller="Identity" asp-action="Index">
+            <i class="fas fa-users-cog"></i> ادارة الصلاحيات
+        </a>
+        <div class="submenu">
+            <a asp-area="Admin" asp-controller="Identity" asp-action="User">
+                <i class="fas fa-user"></i> المستخدمون
+            </a>
+            <a asp-area="Admin" asp-controller="Identity" asp-action="Role">
+                <i class="fas fa-id-badge"></i> الأدوار (Roles)
+            </a>
+            <a asp-area="Admin" asp-controller="Identity" asp-action="UserRoles">
+                <i class="fas fa-user-shield"></i> صلاحيات المستخدمين
+            </a>
+        </div>
+    </div>
+
+    <div class="main-wrapper">
+        <nav class="top-nav">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#" class="text-decoration-none">المنطقة الإدارية</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">@ViewData["Title"]</li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="d-flex align-items-center">
+                <partial name="_LoginPartial" />
+            </div>
+        </nav>
+
+        <div class="card-custom">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

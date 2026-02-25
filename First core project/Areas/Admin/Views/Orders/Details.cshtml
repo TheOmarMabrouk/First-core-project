@@ -1,0 +1,132 @@
+﻿@model First_core_project.Models.Order
+
+@{
+    ViewData["Title"] = "تفاصيل الطلب";
+    var items = ViewBag.Items as List<First_core_project.Models.OrderItem>;
+}
+
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>تفاصيل الطلب #@Model.Id</h2>
+        <a asp-action="Index" class="btn btn-secondary">العودة للقائمة</a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">معلومات عامة</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>اسم العميل:</strong> @ViewBag.CustomerEmail</p>
+                    <p><strong>تاريخ الطلب:</strong> @Model.CreatAt?.ToString("yyyy-MM-dd HH:mm")</p>
+                    <hr />
+                    <p><strong>الإجمالي:</strong> <span class="text-success h5">@((Model.TotalPrice ?? 0).ToString("C"))</span></p>
+                    <p>
+                        <strong>حالة الدفع:</strong>
+                        @if (Model.Status == 1)
+                        {
+                            <span class="badge bg-success">تم الدفع (Paid)</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">لم يتم الدفع (Pending)</span>
+                        }
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">تحديث حالة الطلب</h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="UpdateStatus" method="post">
+                        <input type="hidden" name="orderId" value="@Model.Id" />
+                        <div class="mb-3">
+                            <select name="newStatus" class="form-select">
+                                <option value="0" selected="@(Model.Status == 0)">قيد الانتظار (Pending)</option>
+                                <option value="1" selected="@(Model.Status == 1)">تم الدفع (Paid)</option>
+                                <option value="2" selected="@(Model.Status == 2)">تم الشحن (Shipped)</option>
+                                <option value="3" selected="@(Model.Status == 3)">تم التوصيل (Delivered)</option>
+                                <option value="4" selected="@(Model.Status == 4)">ملغي (Cancelled)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">تحديث الحالة</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">المنتجات المطلوبة</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>المنتج</th>
+                                    <th>السعر وقت الشراء</th>
+                                    <th>الكمية</th>
+                                    <th>الإجمالي</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in items)
+                                {
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td>@item.Price?.ToString("C")</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.Total?.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                   
+                                    <th colspan="3" class="text-end">الإجمالي الكلي:</th>
+                                    <th class="text-success h5">@((Model.TotalPrice ?? 0).ToString("C"))</th>
+                                </tr>
+                            </tfoot>
+                            @if (Model.Status != 4)
+                            {
+                                <button type="button" class="btn btn-outline-danger w-100 mt-2" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                    إلغاء الطلب
+                                </button>
+                            }
+
+                            <div class="modal fade" id="cancelModal" tabindex="-1" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header bg-danger text-white">
+                                            <h5 class="modal-title">تأكيد إلغاء الطلب #@Model.Id</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form asp-action="CancelOrder" method="post">
+                                            <div class="modal-body">
+                                                <input type="hidden" name="orderId" value="@Model.Id" />
+                                                <p>هل أنت متأكد من إلغاء هذا الطلب؟ هذا الإجراء سيؤدي لتغيير حالة الطلب نهائياً.</p>
+                                                <div class="mb-3">
+                                                    <label class="form-label">سبب الإلغاء (اختياري):</label>
+                                                    <textarea name="reason" class="form-control" rows="3" placeholder="مثلاً: العميل طلب الإلغاء، المنتج غير متوفر..."></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">تراجع</button>
+                                                <button type="submit" class="btn btn-danger">تأكيد الإلغاء الفوري</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

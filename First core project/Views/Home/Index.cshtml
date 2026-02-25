@@ -1,0 +1,312 @@
+﻿@model First_core_project.Models.IndexVm
+
+
+<div class="container mt-5 mb-5">
+	<form asp-controller="Home" asp-action="Search" method="get">
+		<div class="row">
+			<input type="submit" class="col-sm-2 btn btn-primary" value="ابحث" />
+			<div class="col-sm-10">
+				<input type="text" name="xname" id="xname" style="text-align:right" class="form-control" placeholder="البحث">
+			</div>
+		</div>
+	</form>
+</div>
+
+
+
+
+
+<section id="services" class="services section">
+
+	<!-- Section Title -->
+	<div class="container section-title" data-aos="fade-up">
+		<h2>اقسام الموقع</h2>
+		<p> نحن في خدمتكم ونقدم لكم افضل المنتجات اينما كنتم مع امكانية توصيل الطلبات الي المنازالمنازل</p>
+	</div><!-- End Section Title -->
+
+	<div class="container">
+
+		<div class="row gy-4">
+
+			@foreach (var item in Model.Categories)
+			{
+
+				<div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="100">
+					<div class="service-item d-flex">
+						<div class="icon flex-shrink-0"><i class="bi bi-briefcase"></i></div>
+						<div>
+							<h4 class="title"><a href="/Home/Products/@item.Id" class="stretched-link">@item.Name</a></h4>
+							<p class="description">@item.Description</p>
+						</div>
+					</div>
+
+				</div>
+
+
+
+			}
+
+
+
+
+
+
+
+
+
+			<!-- End Service Item -->
+		</div>
+
+	</div>
+
+</section>
+
+
+<!-- Portfolio Section -->
+<section id="portfolio" class="portfolio section" >
+	
+
+	<!-- Section Title -->
+	<div class="container section-title" data-aos="fade-up">
+		<h2>الاقسام و المنتجات</h2>
+		
+	</div><!-- End Section Title -->
+
+	<div class="container">
+
+		<div class="isotope-layout" data-default-filter="*" data-layout="masonry" data-sort="original-order">
+
+			<ul class="portfolio-filters isotope-filters" data-aos="fade-up" data-aos-delay="100">
+				<li data-filter="*" class="filter-active">الكل</li>
+			
+				
+					@foreach (var item in Model.Categories)
+					{
+						<li data-filter="._@item.Id">@item.Name</li>
+					}
+			
+
+			</ul><!-- End Portfolio Filters -->
+
+			<div class="row gy-4 isotope-container" data-aos="fade-up" data-aos-delay="200">
+
+				
+				
+					@foreach (var item in Model.Products)
+					{
+						<div class="col-lg-4 col-md-6 portfolio-item isotope-item _@(item.Cat?.Id)">
+							<div class="portfolio-content h-100">
+								<a href="/assets/img/portfolio/app-1.jpg" data-gallery="portfolio-gallery-app" class="glightbox"><img src="/assets/img/portfolio/app-1.jpg" class="img-fluid" alt=""></a>
+								<div class="portfolio-info">
+								<h4><a href="/Home/CurrentProducts/@item.Id" title="More Details">@item.Name</a></h4>
+									<p>@item.Discription</p>
+								<a asp-action="AddToCart" asp-controller="Home" asp-route-id="@item.Id" class="btn btn-primary">
+									إضافة للسلة
+								</a>
+								</div>
+							</div>
+						</div>
+					
+					}
+
+				
+
+				<!-- End Portfolio Item -->
+
+			</div>
+
+			<!-- End Portfolio Container -->
+
+		</div>
+
+	</div>
+</section>
+
+
+<!-- Testimonials Section -->
+<section id="testimonials" class="testimonials section light-background">
+
+	<!-- Section Title -->
+	<div class="container section-title" data-aos="fade-up">
+		<h2>أراء العملاء</h2>
+		<p>أراء و تقييمات عملائنا الذين تشرفنا بتقديم منتجاتنا لهم </p>
+	</div><!-- End Section Title -->
+
+	<div class="container" data-aos="fade-up" data-aos-delay="100">
+
+		<div class="swiper init-swiper" data-speed="600" data-delay="5000" data-breakpoints="{ &quot;320&quot;: { &quot;slidesPerView&quot;: 1, &quot;spaceBetween&quot;: 40 }, &quot;1200&quot;: { &quot;slidesPerView&quot;: 3, &quot;spaceBetween&quot;: 40 } }">
+			<script type="application/json" class="swiper-config">
+				{
+				  "loop": true,
+				  "speed": 600,
+				  "autoplay": {
+					"delay": 5000
+				  },
+				  "slidesPerView": "auto",
+				  "pagination": {
+					"el": ".swiper-pagination",
+					"type": "bullets",
+					"clickable": true
+				  },
+				  "breakpoints": {
+					"320": {
+					  "slidesPerView": 1,
+					  "spaceBetween": 40
+					},
+					"1200": {
+					  "slidesPerView": 3,
+					  "spaceBetween": 20
+					}
+				  }
+				}
+			</script>
+			<div class="swiper-wrapper">
+				@foreach (var item in Model.Reviews)
+
+				{
+
+
+
+					<div class="swiper-slide">
+						<div class="testimonial-item" "=" ">
+							<p>@item.Description</p>
+							<img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">
+							<h3>@item.Name</h3>
+							<h4>@item.Subject</h4>
+						</div>
+					</div><!-- End testimonial item -->
+
+
+
+
+
+				}
+
+			</div>
+			<div class="swiper-pagination"></div>
+		</div>
+
+	</div>
+
+</section><!-- /Testimonials Section -->
+<!-- Pricing Section -->
+<section id="pricing" class="pricing section">
+
+	<!-- Section Title -->
+	<div class="container section-title" data-aos="fade-up" style="background:white">
+
+		<h2>احدث المنتجات</h2>
+		<p>المنتجات المضافة موخر</p>
+	</div><!-- End Section Title -->
+
+	<div class="container">
+
+		<div class="row gy-4">
+
+			@foreach(var item in Model.LatestProducts)
+			{
+
+
+				<div class="col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+					<div class="pricing-item featured">
+						<h3>@item.Name</h3>
+
+						<h1>@item.Price</h1>
+							
+
+								<a href="/Home/CurrentProducts/@item.Id" class="buy-btn">تفاصيل</a>
+					</div>
+				</div>
+			
+				<!-- End Pricing Item -->
+			}
+
+
+			
+
+		</div>
+
+	</div>
+
+</section><!-- /Pricing Section -->
+
+
+
+
+
+
+
+
+
+
+<section id="contact" class="contact section">
+
+	<div class="container section-title" data-aos="fade-up">
+		<h2>تواصل معنا</h2>
+		<p>تواصل معنا لتقديم مقترحاتك أو مراسلاتنا من اجل خدمات الشراء</p>
+	</div>
+
+	<div class="container" data-aos="fade-up" data-aos-delay="100">
+		<div class="row gy-4">
+
+			<div class="col-lg-6">
+				<div class="row gy-4">
+					<div class="col-md-6">
+						<div class="info-item" data-aos="fade" data-aos-delay="200">
+							<i class="bi bi-geo-alt"></i>
+							<h3>العنوان</h3>
+							<p>بني سويف شرق النيل</p>
+						</div>
+					</div>
+
+					<div class="col-md-6">
+						<div class="info-item" data-aos="fade" data-aos-delay="300">
+							<a href="https://api.whatsapp.com/send?phone=+201550664394" target="_blank" style="text-decoration: none; color: inherit;">
+								<i class="bi bi-telephone"></i>
+								<h3>واتساب</h3>
+							</a>
+						</div>
+					</div>
+					<div class="col-md-12">
+						<div class="info-item" data-aos="fade" data-aos-delay="400">
+							<a href="mailto:mraljzar90@gmail.com?subject=Contact" style="text-decoration: none; color: inherit;">
+								<i class="bi bi-envelope"></i>
+								<h3>رسالة بريد الكتروني</h3>
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-lg-6">
+				<form asp-action="sendreview" asp-controller="Home" method="post" class="myform" data-aos="fade-up" data-aos-delay="200">
+					<div class="row gy-4" dir="rtl">
+
+						<div class="col-md-6">
+							<input type="text" name="Name" id="Name" class="form-control" placeholder="الاسم" required>
+						</div>
+
+						<div class="col-md-6">
+							<input type="email" class="form-control" name="Email" id="Email" placeholder="البريد الالكتروني" required>
+						</div>
+
+						<div class="col-12">
+							<input type="text" class="form-control" name="Subject" id="Subject" placeholder="عنوان الرسالة" required>
+						</div>
+
+						<div class="col-12">
+							<textarea class="form-control" name="Description" id="Description" rows="6" placeholder="محتوى الرسالة" required></textarea>
+						</div>
+
+						<div class="col-12 text-center">
+							<button type="submit" class="btn btn-primary">ارسال</button>
+						</div>
+
+					</div>
+				</form>
+			</div>
+
+		</div>
+	</div>
+
+</section>

@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<IdentityUser>
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"] = "إدارة صلاحيات المستخدمين";
+}
+
+<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">تحكم الصلاحيات الديناميكي</h4>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>المستخدم</th>
+                    <th>البريد الإلكتروني</th>
+                    <th class="text-center">تعديل الصلاحيات (اضغط للتبديل)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td class="fw-bold">@user.UserName</td>
+                        <td>@user.Email</td>
+                        <td class="text-center">
+                            @foreach (var role in ViewBag.allRoles as List<IdentityRole>)
+                            {
+                                // التأكد إن اسم الرول مش فاضي قبل ما نسأل الـ UserManager
+                                if (!string.IsNullOrWhiteSpace(role?.Name))
+                                {
+                                    var hasRole = await UserManager.IsInRoleAsync(user, role.Name);
+
+                                    <form asp-action="ToggleUserRole" method="post" style="display:inline;">
+                                        <input type="hidden" name="userId" value="@user.Id" />
+                                        <input type="hidden" name="roleName" value="@role.Name" />
+
+                                        <button type="submit" class="btn btn-sm @(hasRole ? "btn-primary" : "btn-outline-secondary") px-3 m-1 shadow-sm">
+                                            <i class="fas @(hasRole ? "fa-user-shield" : "fa-user-plus") mr-1"></i>
+                                            @role.Name
+                                        </button>
+                                    </form>
+                                }
+                            
+    }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info text-center">لا يوجد مستخدمين مسجلين حالياً.</div>
+}

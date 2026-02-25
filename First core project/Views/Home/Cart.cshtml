@@ -1,0 +1,136 @@
+﻿@model IEnumerable<First_core_project.Models.Cart>
+
+@{
+    ViewData["Title"] = "سلة التسوق";
+}
+
+<section id="cart-details" class="cart-details section mt-5">
+    <div class="container" data-aos="fade-up">
+
+        <div class="section-title text-center mb-5">
+            <h2 style="font-weight: bold; color: #124265;">سلة التسوق الخاصة بك</h2>
+            <p>راجع منتجاتك قبل إتمام عملية الشراء</p>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div id="empty-cart-msg" class="row justify-content-center">
+                <div class="col-lg-6 text-center">
+                    <div style="background-color: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 40px; direction: rtl;">
+                        <i class="bi bi-cart-x" style="font-size: 4rem; color: #ccc;"></i>
+                        <h4 class="mt-3">سلتك فارغة حالياً!</h4>
+                        <a href="/Home/Index" class="btn btn-primary mt-3">ابدأ التسوق الآن</a>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="row gy-4 justify-content-center">
+                <div class="col-lg-8">
+                    <div style="background-color: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 20px; direction: rtl;">
+                        <div class="table-responsive">
+                            <table class="table align-middle" style="text-align: right;">
+                                <thead style="background-color: #f8f9fa;">
+                                    <tr>
+                                        <th>المنتج</th>
+                                        <th>الاسم</th>
+                                        <th>السعر</th>
+                                        <th>الكمية</th>
+                                        <th>الإجمالي</th>
+                                        <th class="text-center">حذف</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr id="row-@item.Id">
+                                            <td>
+                                                <img src="~/assets/img/products/@(item.ProductId).jpg"
+                                                     style="width: 60px; height: 60px; border-radius: 8px; border: 1px solid #eee; object-fit: cover;"
+                                                     alt="@item.Product?.Name"
+                                                     onerror="this.src='/assets/img/testimonials/testimonials-1.jpg';">
+                                            </td>
+                                            <td>
+                                                <h6 style="margin: 0; font-weight: bold;">@(item.Product?.Name ?? "منتج غير معروف")</h6>
+                                                <small class="text-muted">@(item.Product?.Cat?.Name ?? "بدون قسم")</small>
+                                            </td>
+                                            <td>
+                                                @* حل مشكلة الـ ToString هنا *@
+                                                @((item.Product?.Price ?? 0).ToString("N2")) ج.م
+                                            </td>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <button type="button" onclick="updateQty(@item.Id, 'decrease')" class="btn btn-sm btn-outline-secondary">-</button>
+                                                    <span id="qty-@item.Id" class="badge bg-light text-dark border p-2" style="min-width: 30px;">@(item.Qty ?? 0)</span>
+                                                    <button type="button" onclick="updateQty(@item.Id, 'increase')" class="btn btn-sm btn-outline-secondary">+</button>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                @* حل مشكلة الـ ToString في الإجمالي *@
+                                                <strong id="item-total-@item.Id">
+                                                    @(((item.Qty ?? 0) * (item.Product?.Price ?? 0)).ToString("N2")) ج.م
+                                                </strong>
+                                            </td>
+                                            <td class="text-center">
+                                                <a asp-action="RemoveFromCart" asp-controller="Home" asp-route-id="@item.Id"
+                                                   class="text-danger" onclick="return confirm('هل أنت متأكد من حذف هذا المنتج؟')">
+                                                    <i class="bi bi-trash" style="font-size: 1.2rem;"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div style="background-color: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 20px; text-align: right; direction: rtl;">
+                        <h3 style="margin-bottom: 20px; font-size: 1.5rem; border-bottom: 2px solid #eee; padding-bottom: 10px;">ملخص الطلب</h3>
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li class="d-flex justify-content-between mb-2">
+                                <span>إجمالي السلة:</span>
+                                <strong id="cart-total" style="color: #d9534f; font-size: 1.2rem;">
+                                    @Model.Sum(x => (x.Qty ?? 0) * (x.Product?.Price ?? 0)).ToString("N2") ج.م
+                                </strong>
+                            </li>
+                        </ul>
+                        <form asp-controller="Orders" asp-action="Checkout" method="post" class="mt-3">
+                            <button type="submit" class="btn btn-success w-100">إتمام الطلب</button>
+                        </form>
+                        <a href="/Home/Index" class="btn btn-outline-secondary w-100 mt-2">العودة للتسوق</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function updateQty(itemId, op) {
+            // بنستخدم الـ POST عشان يكلم الـ Action اللي عملناه
+            $.post('/Home/UpdateQuantity', { id: itemId, operation: op }, function (data) {
+                if (data.itemDeleted) {
+                    $("#row-" + itemId).fadeOut(300, function() {
+                        $(this).remove();
+                        // لو السلة فضيت خالص، اعمل ريفريش عشان تظهر رسالة "السلة فارغة"
+                        if ($('tbody tr').length == 0) location.reload();
+                    });
+                } else {
+                    // تحديث الكمية في الـ Span
+                    $("#qty-" + itemId).text(data.newQty);
+                    // تحديث سعر السطر ده
+                    $("#item-total-" + itemId).text(data.itemTotal + " ج.م");
+                }
+                // تحديث إجمالي السلة كلها
+                $("#cart-total").text(data.cartTotal + " ج.م");
+            }).fail(function() {
+                alert("حدث خطأ، تأكد من تسجيل الدخول أو وجود المنتج");
+            });
+        }
+    </script>
+}

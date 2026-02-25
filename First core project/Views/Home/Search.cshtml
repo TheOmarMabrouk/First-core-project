@@ -1,0 +1,67 @@
+﻿@model List<First_core_project.Models.Product>
+
+
+<div class="container mt-5 mb-5">
+	<form asp-controller="Home" asp-action="Search" method="get">
+		<div class="row">
+			<input type="submit" class="col-sm-2 btn btn-primary" value="ابحث" />
+			<div class="col-sm-10">
+				<input type="text" name="xname" id="xname"   style="text-align:right" class="form-control" placeholder="البحث">
+			</div>
+		</div>
+	</form>
+</div>
+
+
+
+
+
+
+
+
+
+<section id="services" class="services section">
+
+	<!-- Section Title -->
+	<div class="container section-title" data-aos="fade-up">
+		<h2>البحث في المنتجات   </h2>
+		<p> نحن في خدمتكم ونقدم لكم افضل المنتجات اينما كنتم مع امكانية توصيل الطلبات الي المنازالمنازل</p>
+	</div><!-- End Section Title -->
+
+	<div class="container">
+
+		<div class="row gy-4">
+
+			@foreach (var item in Model)
+			{
+
+				<div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="100">
+					<div class="service-item d-flex">
+						<div class="icon flex-shrink-0"><i class="bi bi-briefcase"></i></div>
+						<div>
+							<h4 class="title"><a href="#" class="stretched-link">@item.Name</a></h4>
+							<p class="description">@item.Discription</p>
+						</div>
+					</div>
+
+				</div>
+
+
+
+			}
+
+
+
+
+
+
+
+
+
+			<!-- End Service Item -->
+		</div>
+
+	</div>
+
+</section>
+

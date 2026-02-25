@@ -1,0 +1,85 @@
+﻿@model Product
+
+<section id="portfolio-details" class="portfolio-details section">
+    <div class="container aos-init aos-animate" data-aos="fade-up">
+
+        <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+            <div class="swiper init-swiper"
+                 data-speed="600"
+                 data-delay="5000"
+                 data-breakpoints='{ "320": { "slidesPerView": 1, "spaceBetween": 40 }, "1200": { "slidesPerView": 3, "spaceBetween": 40 } }'>
+
+                <script type="application/json" class="swiper-config">
+                    {
+                      "loop": true,
+                      "speed": 600,
+                      "autoplay": { "delay": 5000 },
+                      "slidesPerView": "auto",
+                      "pagination": { "el": ".swiper-pagination", "type": "bullets", "clickable": true },
+                      "breakpoints": {
+                        "320": { "slidesPerView": 1, "spaceBetween": 40 },
+                        "1200": { "slidesPerView": 3, "spaceBetween": 20 }
+                      }
+                    }
+                </script>
+
+                <div class="swiper-wrapper">
+                    @if (Model.ProductImages != null && Model.ProductImages.Any())
+                    {
+                        foreach (var item in Model.ProductImages)
+                        {
+                            <div class="swiper-slide">
+                                <div class="testimonial-item">
+                                    <!-- الصورة الثابتة -->
+                                    <img src="~/assets/img/testimonials/testimonials-1.jpg"
+                                         class="testimonial-img"
+                                         alt="@Model.Name" />
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="swiper-slide">
+                            <div class="testimonial-item">
+                                <img src="~/assets/img/testimonials/testimonials-1.jpg"
+                                     class="testimonial-img"
+                                     alt="@Model.Name" />
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="swiper-pagination"></div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- بيانات المنتج -->
+<div class="row justify-content-end gy-4 mt-4">
+
+    <div class="col-lg-4 aos-init aos-animate" data-aos="fade-up" data-aos-delay="100">
+        <div style="background-color: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 20px; text-align: right; direction: rtl;">
+            <h3 style="margin-bottom: 15px;">بيانات المنتج</h3>
+            <ul style="list-style: none; padding: 0; margin: 0;">
+                <li><strong>القسم:</strong> @Model.Cat.Name</li>
+                <li><strong>البائع:</strong> @Model.SupplierName</li>
+                <li><strong>السعر:</strong> @Model.Price</li>
+                <li><strong>تاريخ المنتج:</strong> @Model.EntryDate</li>
+                <li><strong>رابط تقييمات العملاء:</strong> <a href="#">@Model.ReviewUrl</a></li>
+                <a asp-action="AddToCart" asp-controller="Home" asp-route-id="@Model.Id" class="btn btn-primary">
+                    إضافة للسلة
+                </a>
+            </ul>
+        </div>
+
+        <div style="background-color: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin-top: 20px; text-align: right; direction: rtl;">
+            <h4 style="font-weight: bold; margin-bottom: 10px;">@Model.Name</h4>
+            <p>@Model.Discription</p>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "AdminPanel.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:31395;http://localhost:31396"
+    }
+  }
+}
