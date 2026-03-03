@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36327.8
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ECommerceBackend", "First core project\ECommerceBackend.csproj", "{DAF11232-7B9F-4FE9-BB52-D2147F5804A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "First_core_project", "First core project\First_core_project.csproj", "{DAF11232-7B9F-4FE9-BB52-D2147F5804A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "First_core_project.Tests", "First_core_project.Tests\First_core_project.Tests.csproj", "{9B3CF2C2-994B-43B1-94A1-079E6AE55A5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{DAF11232-7B9F-4FE9-BB52-D2147F5804A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAF11232-7B9F-4FE9-BB52-D2147F5804A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAF11232-7B9F-4FE9-BB52-D2147F5804A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B3CF2C2-994B-43B1-94A1-079E6AE55A5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B3CF2C2-994B-43B1-94A1-079E6AE55A5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B3CF2C2-994B-43B1-94A1-079E6AE55A5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B3CF2C2-994B-43B1-94A1-079E6AE55A5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

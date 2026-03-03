@@ -1,48 +1,50 @@
 ﻿@model List<First_core_project.Models.Product>
 
-
 <section id="services" class="services section">
 
-	<!-- Section Title -->
 	<div class="container section-title" data-aos="fade-up">
-		<h2>المنتجات الخاصة بالقسم  </h2>
-		<p> نحن في خدمتكم ونقدم لكم افضل المنتجات اينما كنتم مع امكانية توصيل الطلبات الي المنازالمنازل</p>
-	</div><!-- End Section Title -->
+		<h2>المنتجات الخاصة بالقسم</h2>
+		<p>نحن في خدمتكم ونقدم لكم افضل المنتجات اينما كنتم مع امكانية توصيل الطلبات الي المنازالمنازل</p>
+	</div><div class="container">
+		<div class="row mb-4 justify-content-end" data-aos="fade-up">
+			<div class="col-md-3">
+				<form method="get" id="sortForm" class="d-flex align-items-center">
+					@* بنبعت الـ id بتاع القسم تاني عشان الصفحة متنقلش *@
+					<input type="hidden" name="id" value="@ViewContext.RouteData.Values["id"]" />
 
-	<div class="container">
-
-		<div class="row gy-4">
-
-			@foreach (var item in Model)
-			{
-
-				<div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="100">
-					<div class="service-item d-flex">
-						<div class="icon flex-shrink-0"><i class="bi bi-briefcase"></i></div>
-						<div>
-							<h4 class="title"><a href="/Home/CurrentProducts/@item.Id" class="stretched-link">@item.Name</a></h4>
-							<p class="description">@item.Discription</p>
-						</div>
-					</div>
-
-				</div>
-
-
-
-			}
-
-
-
-
-
-
-
-
-
-			<!-- End Service Item -->
+					<select name="sortOrder" class="form-select" onchange="this.form.submit()" style="direction:rtl;">
+						<option value="">ترتيب حسب...</option>
+						<option value="price_asc" selected="@(ViewBag.CurrentSort == "price_asc")">السعر: من الأقل للأعلى</option>
+						<option value="price_desc" selected="@(ViewBag.CurrentSort == "price_desc")">السعر: من الأعلى للأقل</option>
+						<option value="name_desc" selected="@(ViewBag.CurrentSort == "name_desc")">الاسم: من الياء للألف</option>
+					</select>
+				</form>
+			</div>
 		</div>
 
+		<div class="row gy-4">
+			@if (Model.Any())
+			{
+				@foreach (var item in Model)
+				{
+					<div class="col-xl-4 col-lg-6" data-aos="fade-up" data-aos-delay="100">
+						<div class="service-item d-flex">
+							<div class="icon flex-shrink-0"><i class="bi bi-briefcase"></i></div>
+							<div>
+								<h4 class="title"><a href="/Home/CurrentProducts/@item.Id" class="stretched-link">@item.Name</a></h4>
+								<p class="description">@item.Discription</p>
+								<span class="badge bg-primary">@item.Price ج.م</span>
+							</div>
+						</div>
+					</div>
+				}
+			}
+			else
+			{
+				<div class="col-12 text-center">
+					<p class="alert alert-warning">لا توجد منتجات في هذا القسم حالياً.</p>
+				</div>
+			}
+		</div>
 	</div>
-
 </section>
-

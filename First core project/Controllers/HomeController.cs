@@ -1,208 +1,185 @@
-using First_core_project.Data;
+using First_core_project.Dtos;
+using First_core_project.Helpers;
 using First_core_project.Models;
+using First_core_project.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using System.Threading.Tasks;                                               
 
 namespace First_core_project.Controllers
 {
     public class HomeController : Controller
     {
-       
-        private readonly ApplicationDbContext _identityDb;
-        private readonly SouqcomContext db;
+        private readonly IHomeService _homeService;
+        private readonly ICartService _cartService;
+        private readonly IProductService _productService;
+        private readonly IReviewService _reviewService;
+        private readonly ILogger<HomeController> _logger;
 
         public HomeController(
-            
-            ApplicationDbContext identityDb,
-            SouqcomContext DB)
+            IHomeService homeService,
+            ICartService cartService,
+            IProductService productService,
+            IReviewService reviewService,
+            ILogger<HomeController> logger)
         {
-            
-            _identityDb = identityDb;
-            db = DB;
+            _homeService = homeService;
+            _cartService = cartService;
+            _productService = productService;
+            _reviewService = reviewService;
+            _logger = logger;
         }
 
-      
-      
+        // =======================
+        // Home
+        // =======================
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IndexVm result = new IndexVm();
+            _logger.LogInformation("Home page loaded");
 
-            result.Categories = db.Categories.ToList();
-            result.Products = db.Products.ToList();
-            result.Reviews = db.Reviews.ToList();
-            result.LatestProducts = db.Products.OrderByDescending(x => x.EntryDate).Take(3).ToList();
-
-
+            var result = await _homeService.GetHomeDataAsync();
             return View(result);
         }
+
+        // =======================
+        // Cart
+        // =======================
+
         [Authorize]
-        public IActionResult Cart()
+        public async Task<IActionResult> Cart()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var myCart = db.Carts
-                           .Include(x => x.Product)
-                           .Where(x => x.UserId == userId)
-                           .ToList();
+            _logger.LogInformation("Cart viewed by user {UserId}", userId);
 
+            var myCart = await _cartService.GetCartItemsAsync(userId);
             return View(myCart);
         }
 
-        // 2. ????? ???? ????? (???? ????? ???? ???????)
         [Authorize]
-        public IActionResult AddToCart(int id)
+        public async Task<IActionResult> AddToCart(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // ????? ?? ?????? ?? ????? ????? ?? ??? ???????? ???
-            var existingItem = db.Carts.FirstOrDefault(c => c.ProductId == id && c.UserId == userId);
+            _logger.LogInformation("User {UserId} adding product {ProductId} to cart", userId, id);
 
-            if (existingItem != null)
-            {
-                // ?? ????? ??? ?????? ??
-                existingItem.Qty++;
-            }
-            else
-            {
-                // ?? ?? ????? ??? ??? ????
-                var cartItem = new Cart
-                {
-                    ProductId = id,
-                    UserId = userId,
-                    Qty = 1
-                };
-                db.Carts.Add(cartItem);
-            }
-
-            db.SaveChanges();
+            await _cartService.AddToCartAsync(id, userId);
             return RedirectToAction("Cart");
         }
 
-        // 3. ????? ?????? (?????? ???? ????? ????? - API Style)
         [Authorize]
         [HttpPost]
-        public IActionResult UpdateQuantity(int id, string operation)
+        public async Task<IActionResult> UpdateQuantity(int id, string operation)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // ??? ???? Include ???? ?????
-            var item = db.Carts
-                         .Include(x => x.Product)
-                         .FirstOrDefault(x => x.Id == id && x.UserId == userId);
+            var result = await _cartService.UpdateQuantityAsync(id, userId, operation);
 
-            if (item == null) return NotFound();
-
-            if (operation == "increase")
+            if (!result.Success)
             {
-                item.Qty = (item.Qty ?? 0) + 1;
-            }
-            else if (operation == "decrease")
-            {
-                if (item.Qty > 1)
-                {
-                    item.Qty -= 1;
-                }
-                else
-                {
-                    db.Carts.Remove(item);
-                    db.SaveChanges();
-
-                    return Ok(new
-                    {
-                        itemDeleted = true,
-                        cartTotal = GetCartTotal(userId)
-                    });
-                }
+                _logger.LogWarning("Failed quantity update for product {ProductId} by user {UserId}", id, userId);
+                return Json(new { success = false });
             }
 
-            db.SaveChanges();
-
-            return Ok(new
+            return Json(new
             {
-                itemDeleted = false,
-                newQty = item.Qty,
-                itemTotal = ((item.Qty ?? 0) * (item.Product?.Price ?? 0)).ToString("N2"),
-                cartTotal = GetCartTotal(userId)
+                success = true,
+                newQty = result.NewQty,
+                itemTotal = result.ItemTotal.ToString("N2"),
+                cartTotal = result.CartTotal.ToString("N2")
             });
         }
 
-        // 4. ??? ???? ???????
         [Authorize]
-        public IActionResult RemoveFromCart(int id)
+        public async Task<IActionResult> RemoveFromCart(int id)
         {
-            var item = db.Carts.Find(id);
-            if (item != null)
-            {
-                db.Carts.Remove(item);
-                db.SaveChanges();
-            }
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            _logger.LogInformation("User {UserId} removed product {ProductId} from cart", userId, id);
+
+            await _cartService.RemoveFromCartAsync(id, userId);
             return RedirectToAction("Cart");
         }
 
-        // ???? ?????? ????? ?????? ????? ????? ????? ?????
-        private string GetCartTotal(string userId)
+        // =======================
+        // Categories & Products
+        // =======================
+
+        public async Task<IActionResult> Categories()
         {
-            var total = db.Carts
-                          .Where(x => x.UserId == userId)
-                          .Sum(x => (x.Qty ?? 0) * (x.Product.Price ?? 0));
-            return total.ToString("N2");
+            var categories = await _productService.GetCategoriesAsync();
+            return View(categories);
         }
 
-
-        public IActionResult Categories() => View(db.Categories.ToList());
-
-        public IActionResult Products(int id)
+        public async Task<IActionResult> Products(int id, [FromQuery] PaginationParams param)
         {
-            var products = db.Products.Where(x => x.Catid == id).ToList();
+            _logger.LogInformation("Products page loaded for category {CategoryId}", id);
+
+            var products = await _productService.GetProductsByCategoryAsync(id, param);
+
+            ViewBag.CategoryId = id;
+            ViewBag.SortBy = param.SortBy;
+            ViewBag.Desc = param.Desc;
+            ViewBag.PageNumber = param.PageNumber;
+
             return View(products);
         }
 
-        public IActionResult CurrentProducts(int id)
+        public async Task<IActionResult> CurrentProducts(int id)
         {
-            var product = db.Products
-                .Include(x => x.Cat)
-                .Include(x => x.ProductImages)
-                .FirstOrDefault(x => x.Id == id);
+            var product = await _productService.GetProductDetailsAsync(id);
+
+            if (product == null)
+            {
+                _logger.LogWarning("Product details requested but not found. ProductId: {ProductId}", id);
+                return NotFound();
+            }
+
             return View(product);
         }
 
+        // =======================
+        // Search
+        // =======================
+
         [HttpGet]
-        public IActionResult Search(string xname)
+        public async Task<IActionResult> Search(string? xname, [FromQuery] PaginationParams param)
         {
-            var products =  new List<Product>();
+            _logger.LogInformation("Search requested for keyword: {Keyword}", xname);
 
-            if (string.IsNullOrEmpty(xname))
-                products = db.Products.ToList();
+            var products = await _productService.SearchProductsAsync(xname, param);
 
-            else
-               products =  db.Products.Where(x => x.Name.Contains(xname)).ToList();
-
+            ViewBag.Keyword = xname;
             return View(products);
         }
 
+        // =======================
+        // Reviews
+        // =======================
+
         [HttpPost]
-        public IActionResult SendReview(ReviewVm model)
+        public async Task<IActionResult> SendReview(ReviewVm model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                db.Reviews.Add(new Review
-                {
-                    Name = model.Name,
-                    Email = model.Email,
-                    Subject = model.Subject,
-                    Description = model.Description
-                });
-                db.SaveChanges();
+                _logger.LogWarning("Invalid review submission by: {User}", model?.Name);
+                return RedirectToAction("Index");
             }
+
+            await _reviewService.AddReviewAsync(model);
+
+            _logger.LogInformation("New review submitted by: {User}", model.Name);
+
             return RedirectToAction("Index");
         }
 
+        // =======================
+
         [Authorize]
-        public IActionResult Privacy() => View();
+        public IActionResult Privacy()
+        {
+            return View();
+        }
     }
 }
