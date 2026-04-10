@@ -1,17 +1,18 @@
 using First_core_project.Data;
 using First_core_project.Models;
 using First_core_project.Services;
+using First_core_project.Services.API;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 using System.Text.Json.Serialization;
-using FluentValidation;
-using FluentValidation.AspNetCore;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,10 +21,15 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddDbContext<SouqcomContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddScoped<IHomeService, HomeService>();
+
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IApiProductService, ApiProductService>();
+builder.Services.AddScoped<IApiCategoryService, ApiCategoryService>();
 builder.Services.AddScoped<IReviewService, ReviewService>();
 builder.Services.AddScoped<ICartService, CartService>();
+builder.Services.AddScoped<IApiCartService, ApiCartService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+
 builder.Services.AddHttpClient<IPaymentService, PaymobPaymentService>();
 builder.Services.AddFluentValidationAutoValidation()
                 .AddFluentValidationClientsideAdapters();
@@ -120,7 +126,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // ??????? ??? "??? ????"
-app.UseMiddleware<GlobalExceptionMiddleware>();
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -4,6 +4,7 @@ using First_core_project.Models;
 using First_core_project.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 using System.Security.Claims;
 
 namespace First_core_project.Controllers
@@ -30,9 +31,9 @@ namespace First_core_project.Controllers
             _logger = logger;
         }
 
-        // =======================
+       
         // Home
-        // =======================
+     
 
         public async Task<IActionResult> Index()
         {
@@ -42,9 +43,9 @@ namespace First_core_project.Controllers
             return View(result);
         }
 
-        // =======================
+        
         // Cart
-        // =======================
+       
 
         [Authorize]
         public async Task<IActionResult> Cart()
@@ -151,6 +152,7 @@ namespace First_core_project.Controllers
             var products = await _productService.SearchProductsAsync(xname, param);
 
             ViewBag.Keyword = xname;
+            ViewBag.CurrentPage = param.PageNumber;
             return View(products);
         }
 
@@ -175,6 +177,9 @@ namespace First_core_project.Controllers
         }
 
         // =======================
+       
+
+       
 
         [Authorize]
         public IActionResult Privacy()

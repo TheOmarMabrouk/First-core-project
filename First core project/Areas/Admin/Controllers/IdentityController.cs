@@ -20,6 +20,12 @@ namespace First_core_project.Areas.Admin.Controllers
             _roleManager = roleManager;
         }
 
+        public IActionResult Index()
+        {
+          
+            return View();
+        }
+
         // الصفحة الأساسية لعرض المستخدمين وصلاحياتهم
         public IActionResult UserRoles()
         {

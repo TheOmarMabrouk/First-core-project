@@ -1,5 +1,6 @@
 ﻿using First_core_project.Data;
 using First_core_project.Dtos;
+using First_core_project.DTOs.Cart_DTOs;
 using First_core_project.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,10 +45,7 @@ namespace First_core_project.Services
                 .ToListAsync();
         }
 
-        public Task<decimal> GetCartTotalAsync(string userId)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public async Task RemoveFromCartAsync(int cartId, string userId)
         {

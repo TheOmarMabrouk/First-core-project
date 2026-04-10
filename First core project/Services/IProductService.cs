@@ -14,8 +14,5 @@ public interface IProductService
     Task<List<Product>> SearchProductsAsync(
         string? name,
         PaginationParams param);
-    string? SearchProducts(string xname);
-    string? GetProductDetails(int id);
-    string? GetProductsByCategory(int id, string sortOrder);
-    string? GetCategories();
+   
 }

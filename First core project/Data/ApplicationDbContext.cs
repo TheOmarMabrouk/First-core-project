@@ -11,7 +11,6 @@ namespace First_core_project.Data
 
         }
 
-        public object Product { get; internal set; }
-        public object Category { get; internal set; }
+      
     }
 }

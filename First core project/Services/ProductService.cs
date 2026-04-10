@@ -59,24 +59,6 @@ namespace First_core_project.Services
                 .ToListAsync();
         }
 
-        public string? SearchProducts(string xname)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string? GetProductDetails(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string? GetProductsByCategory(int id, string sortOrder)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string? GetCategories()
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

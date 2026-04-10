@@ -9,6 +9,6 @@ namespace First_core_project.Services
         Task<List<Cart>> GetCartItemsAsync(string userId);
         Task RemoveFromCartAsync(int cartId, string userId);
         Task<CartUpdateDto> UpdateQuantityAsync(int cartId, string userId, string operation);
-        Task<decimal> GetCartTotalAsync(string userId);
+     
     }
 }
